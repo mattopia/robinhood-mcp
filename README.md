@@ -6,11 +6,13 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![MCP](https://img.shields.io/badge/MCP-compatible-green.svg)](https://modelcontextprotocol.io/)
 
-A read-only MCP server for Robinhood portfolio research. Wraps [robin_stocks](https://github.com/jmfernandes/robin_stocks) to give AI assistants access to your portfolio data for analysis.
+A read-only MCP server for Robinhood portfolio research. Gives AI assistants access to your portfolio data for analysis.
+
+> **🤖 Vibe Coded** - This project was built entirely through AI-assisted development using [Claude Code](https://claude.ai/claude-code). No human wrote the implementation directly.
 
 > **⚠️ Research Tool Only** - This server provides read-only access. No trading functionality is exposed.
 
-> **⚠️ Unofficial API** - Uses robin_stocks unofficial API. May break without notice. Use at your own risk.
+> **⚠️ Unofficial API** - Uses the Robinhood unofficial API (via [robin_stocks](https://github.com/jmfernandes/robin_stocks) for auth and most endpoints, with direct API calls for endpoints not yet covered by robin_stocks). May break without notice. Use at your own risk.
 
 ## What Can You Do With This?
 
@@ -115,20 +117,43 @@ claude mcp add robinhood -- uvx robinhood-mcp
 
 ## Available Tools
 
-| Tool                              | Description                                          |
-| --------------------------------- | ---------------------------------------------------- |
-| `robinhood_get_portfolio`         | Portfolio value, equity, buying power, day change    |
-| `robinhood_get_positions`         | All holdings with cost basis, current value, P&L     |
-| `robinhood_get_watchlist`         | Stocks in your watchlists                            |
-| `robinhood_get_quote`             | Real-time price, bid/ask, volume                     |
-| `robinhood_get_fundamentals`      | P/E ratio, market cap, dividend yield, 52-week range |
-| `robinhood_get_historicals`       | OHLCV price history (day/week/month/year)            |
-| `robinhood_get_news`              | Recent news articles for a symbol                    |
-| `robinhood_get_earnings`          | Earnings dates, EPS estimates, actuals               |
-| `robinhood_get_ratings`           | Analyst buy/hold/sell ratings                        |
-| `robinhood_get_dividends`         | Dividend payment history                             |
-| `robinhood_get_options_positions` | Current options positions                            |
-| `robinhood_search_symbols`        | Search stocks by name or ticker                      |
+### Account Tools
+
+| Tool                              | Description                                                   |
+| --------------------------------- | ------------------------------------------------------------- |
+| `robinhood_get_accounts`          | List all accounts (brokerage + IRA) with account numbers      |
+| `robinhood_get_portfolio`         | Portfolio value, equity, buying power, day change             |
+| `robinhood_get_positions`         | All holdings with cost basis, current value, P&L              |
+| `robinhood_get_dividends`         | Dividend payment history                                      |
+| `robinhood_get_options_positions` | Current options positions                                     |
+| `robinhood_get_watchlist`         | Stocks in your watchlists                                     |
+
+`robinhood_get_accounts` returns all account types in a single call. Distinguish them by `brokerage_account_type`:
+- `"individual"` → standard brokerage account
+- `"ira_traditional"` → Traditional IRA
+- `"ira_roth"` → Roth IRA
+
+`get_portfolio`, `get_positions`, and `get_dividends` accept an optional `account_number` parameter. Call `robinhood_get_accounts` first to discover your account numbers, then pass one to target a specific account (e.g., your IRA).
+
+### Stock Research Tools
+
+| Tool                         | Description                                          |
+| ---------------------------- | ---------------------------------------------------- |
+| `robinhood_get_quote`        | Real-time price, bid/ask, volume                     |
+| `robinhood_get_fundamentals` | P/E ratio, market cap, dividend yield, 52-week range |
+| `robinhood_get_historicals`  | OHLCV price history (day/week/month/year)            |
+| `robinhood_get_news`         | Recent news articles for a symbol                    |
+| `robinhood_get_earnings`     | Earnings dates, EPS estimates, actuals               |
+| `robinhood_get_ratings`      | Analyst buy/hold/sell ratings                        |
+| `robinhood_search_symbols`   | Search stocks by name or ticker                      |
+
+### Crypto Tools
+
+| Tool                               | Description                                  |
+| ---------------------------------- | -------------------------------------------- |
+| `robinhood_get_crypto_positions`   | Current crypto holdings (BTC, ETH, etc.)     |
+| `robinhood_get_crypto_quote`       | Real-time crypto price                       |
+| `robinhood_get_crypto_historicals` | Crypto OHLCV price history                   |
 
 ## Example Conversations
 
@@ -258,7 +283,7 @@ Format as a markdown report I can review on the weekend.
 
 Built with 🧡 by [Jack Arturo](https://drunk.support) at [Very Good Plugins](https://verygoodplugins.com/?utm_source=robinhood-mcp).
 
-Powered by [robin_stocks](https://github.com/jmfernandes/robin_stocks) and [FastMCP](https://github.com/jlowin/fastmcp).
+Powered by [robin_stocks](https://github.com/jmfernandes/robin_stocks), [FastMCP](https://github.com/jlowin/fastmcp), and [Claude Code](https://claude.ai/claude-code).
 
 ## Links
 

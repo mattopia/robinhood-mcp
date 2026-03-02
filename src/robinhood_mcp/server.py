@@ -9,6 +9,10 @@ from fastmcp import FastMCP
 from .auth import AuthenticationError, is_logged_in, login
 from .tools import (
     RobinhoodError,
+    get_accounts,
+    get_crypto_historicals,
+    get_crypto_positions,
+    get_crypto_quote,
     get_dividends,
     get_earnings,
     get_fundamentals,
@@ -61,25 +65,50 @@ def _ensure_logged_in() -> None:
 
 
 @mcp.tool()
-def robinhood_get_portfolio() -> dict:
+def robinhood_get_accounts() -> list:
+    """Get all Robinhood accounts for the logged-in user.
+
+    Returns a list of account profiles including brokerage, traditional IRA,
+    and Roth IRA accounts. Each account includes account_number and account_type,
+    which can be passed to other tools to query a specific account.
+
+    Distinguish account types by brokerage_account_type:
+      - "individual"       → standard brokerage
+      - "ira_traditional"  → Traditional IRA
+      - "ira_roth"         → Roth IRA
+    """
+    _ensure_logged_in()
+    return get_accounts()
+
+
+@mcp.tool()
+def robinhood_get_portfolio(account_number: str | None = None) -> dict:
     """Get current portfolio value and performance metrics.
+
+    Args:
+        account_number: Specific account to query (from robinhood_get_accounts).
+            If omitted, returns the primary brokerage account.
 
     Returns portfolio profile with equity, extended hours equity,
     withdrawable amount, and other account details.
     """
     _ensure_logged_in()
-    return get_portfolio()
+    return get_portfolio(account_number=account_number)
 
 
 @mcp.tool()
-def robinhood_get_positions() -> dict:
+def robinhood_get_positions(account_number: str | None = None) -> dict:
     """Get all current stock positions with details.
+
+    Args:
+        account_number: Specific account to query (from robinhood_get_accounts).
+            If omitted, returns positions for the primary brokerage account.
 
     Returns a dict mapping stock symbols to position details including
     price, quantity, average buy price, equity, and percent change.
     """
     _ensure_logged_in()
-    return get_positions()
+    return get_positions(account_number=account_number)
 
 
 @mcp.tool()
@@ -185,14 +214,18 @@ def robinhood_get_ratings(symbol: str) -> dict:
 
 
 @mcp.tool()
-def robinhood_get_dividends() -> list:
+def robinhood_get_dividends(account_number: str | None = None) -> list:
     """Get all dividend payments received.
+
+    Args:
+        account_number: Specific account to query (from robinhood_get_accounts).
+            If omitted, returns dividends across all accounts.
 
     Returns list of dividend payments with amount, payable date,
     record date, and instrument details.
     """
     _ensure_logged_in()
-    return get_dividends()
+    return get_dividends(account_number=account_number)
 
 
 @mcp.tool()
@@ -218,6 +251,50 @@ def robinhood_search_symbols(query: str) -> list:
     """
     _ensure_logged_in()
     return search_symbols(query)
+
+
+@mcp.tool()
+def robinhood_get_crypto_positions() -> list:
+    """Get all current crypto positions.
+
+    Returns list of crypto positions with currency_code, quantity,
+    average buy price, and current value.
+    """
+    _ensure_logged_in()
+    return get_crypto_positions()
+
+
+@mcp.tool()
+def robinhood_get_crypto_quote(symbol: str) -> dict:
+    """Get real-time quote for a crypto currency.
+
+    Args:
+        symbol: Crypto symbol (e.g., "BTC", "ETH", "DOGE")
+
+    Returns quote data including ask_price, bid_price, mark_price,
+    and 24-hour price change.
+    """
+    _ensure_logged_in()
+    return get_crypto_quote(symbol)
+
+
+@mcp.tool()
+def robinhood_get_crypto_historicals(
+    symbol: str,
+    interval: Literal["15second", "5minute", "10minute", "hour", "day", "week"] = "day",
+    span: Literal["hour", "day", "week", "month", "3month", "year", "5year"] = "week",
+) -> list:
+    """Get historical price data for a crypto currency.
+
+    Args:
+        symbol: Crypto symbol (e.g., "BTC", "ETH")
+        interval: Time interval (15second, 5minute, 10minute, hour, day, week)
+        span: Time span (hour, day, week, month, 3month, year, 5year)
+
+    Returns list of OHLCV data points (open, high, low, close, volume).
+    """
+    _ensure_logged_in()
+    return get_crypto_historicals(symbol, interval, span)
 
 
 def main() -> None:
