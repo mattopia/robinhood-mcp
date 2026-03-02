@@ -6,9 +6,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![MCP](https://img.shields.io/badge/MCP-compatible-green.svg)](https://modelcontextprotocol.io/)
 
-A read-only MCP server for Robinhood portfolio research. Gives AI assistants access to your portfolio data for analysis.
-
-> **🤖 Vibe Coded** - This project was built entirely through AI-assisted development using [Claude Code](https://claude.ai/claude-code). No human wrote the implementation directly.
+This is a fork of verygoodplugins/robinhood-mcp - A read-only MCP server for Robinhood portfolio research. This fork adds support for IRA and crypto assets. Modifications were a mix of Claude Code prompts and reviewing API responses in the dev console. No code was directly written by me.
 
 > **⚠️ Research Tool Only** - This server provides read-only access. No trading functionality is exposed.
 
